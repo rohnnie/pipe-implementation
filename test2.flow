@@ -1,0 +1,23 @@
+node=cat_foo
+command=cat foo.txt
+
+node=grep_rohan
+command=grep 'Rohan'
+
+pipe=foo_to_grep_rohan
+from=cat_foo
+to=grep_rohan
+
+node=word_count
+command=wc
+
+pipe=foo_to_wc
+from=cat_foo
+to=word_count
+
+
+concatenate=final_concatenation
+parts=3
+part_0=cat_foo
+part_1=foo_to_grep_rohan
+part_2=foo_to_wc

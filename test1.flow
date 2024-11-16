@@ -1,0 +1,21 @@
+node=cat_foo
+command=cat foo.txt
+
+node=grep_rohan
+command=grep 'Rohan'
+
+pipe=foo_to_grep_rohan
+from=cat_foo
+to=grep_rohan
+
+node=sed_o_u
+command=sed 's/o/u/g'
+
+pipe=foo_to_sed
+from=cat_foo
+to=sed_o_u
+
+concatenate=final_concatenation
+parts=2
+part_0=foo_to_grep_rohan
+part_1=foo_to_sed

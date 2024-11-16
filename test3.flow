@@ -1,0 +1,24 @@
+node=cat_foo
+command=cat foo2.txt
+
+node=grep_rohan
+command=grep 'Rohan'
+
+node=sed_o_u
+command=sed 's/o/u/g'
+
+node=word_count
+command=wc
+
+pipe=foo_to_grep_rohan
+from=cat_foo
+to=grep_rohan
+
+pipe=grep_to_sed
+from=foo_to_grep_rohan
+to=sed_o_u
+
+pipe=sed_to_wc
+from=grep_to_sed
+to=word_count
+

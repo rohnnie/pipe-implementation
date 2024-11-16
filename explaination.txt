@@ -1,0 +1,47 @@
+
+1. Node Implementation:
+
+The node structure is designed to represent and execute a simple shell command. Each node has a unique name (node_name) and a corresponding shell command (command). The error field indicates whether the node's error output should be redirected to stderr.
+
+Implementation Details:
+The run_node function finds the node by its name, tokenizes the command string into arguments using tokenn, and executes it using execvp. The use of dup2 ensures proper redirection of input (fd_in) and output (fd_out), allowing nodes to interact with pipes, files, and error handling mechanisms.
+The error flag helps direct error output to stderr when necessary. If an error occurs, dup2 redirects stderr to the same output stream as stdout, allowing unified error handling.
+
+2. Pipe Implementation:
+
+Pipes enable chaining two nodes where the output of one becomes the input of another, mimicking shell behavior (e.g., cat file | grep keyword).
+
+Implementation Details:
+Pipes are defined with a pipe_name, from (source node), and to (destination node). The run_pipe function sets up a pipe using the pipe() system call, then forks two processes to handle the source and destination nodes.
+
+The first child process reads from fd_in (input stream) and writes to the pipe’s writing end. The second child process reads from the pipe’s reading end and writes to fd_out (output stream).
+After setting up the pipe, the parent process waits for both child processes to complete using waitpid.
+
+Challenges: The main challenge with pipes is ensuring proper synchronization between the two child processes and managing the lifetime of file descriptors. Both ends of the pipe must be closed appropriately in both the child and parent processes to avoid deadlocks. Also, in case of multiple pipes, proper redirection took time to understand.
+
+3. Concatenation Implementation:
+
+Purpose: Concatenation allows running a sequence of nodes, where each node runs independently, and their outputs are combined. This is similar to running multiple commands in sequence (e.g., cat file; ls; grep keyword).
+
+Implementation Details:
+The Concatenate structure defines a list of parts (part_name[]) representing nodes or pipes, and the run_concatenation function executes each part in sequence.
+Pipes are set up between each part using the pipe() system call, and the function forks processes for each part. After setting up each part, it waits for all child processes to finish using waitpid.
+Each part’s output is read and written to the output file descriptor (fd_out), ensuring a smooth concatenation of results.
+
+
+Challenges: Handling multiple parts and ensuring that the output from each part is correctly passed along to the next can be complex. Pipes are dynamically created for each part, and proper management of file descriptors and processes is crucial to avoid deadlocks or incorrect output.
+
+4. Extra Credit (Error and File Handling):
+
+Error Handling (stderr):
+The implementation includes the ability to redirect error output to stderr. The Stderr structure captures errors from a node (via from), and the run_error function handles nodes that are expected to produce errors.
+If an error-producing node is found, its output is directed to stderr, and the run_flow function executes the node’s command.
+
+File Handling:
+The File structure supports reading from or writing to files. The state of each file is tracked using the state field. The run_file function handles file I/O by either reading from an existing file or writing to it (if the node’s state indicates it should be written to).
+For file creation, open() is used with appropriate flags (O_CREAT | O_WRONLY), and read()/write() is used to manage data transfer.
+
+
+
+
+

@@ -1,0 +1,12 @@
+node=cat_attempt
+command=cat foo4.txt
+
+node=word_count
+command=wc
+
+stderr=stdout_to_stderr_for_cat
+from=cat_attempt
+
+pipe=catch_errors
+from=stdout_to_stderr_for_cat
+to=word_count

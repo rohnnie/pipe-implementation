@@ -1,0 +1,46 @@
+TEST-1
+TEST-BEGIN 
+COMMAND: (cat foo.txt | grep Rohan);(cat foo.txt | sed s/o/u/g) 
+FLOW  COMMAND:  
+./flow test1.flow final_concatenation  
+EXPECTED OUTPUT:  
+My name is "Rohan"
+My name is "Ruhan"
+TEST-END
+
+TEST-2
+TEST-BEGIN 
+COMMAND: cat foo.txt;(cat foo.txt | grep Rohan);(cat foo.txt | wc) 
+FLOW  COMMAND:  
+./flow test2.flow final_concatenation  
+EXPECTED OUTPUT:  
+My name is "Rohan"My name is "Rohan"
+       0       4      18
+TEST-END
+
+TEST-3
+TEST-BEGIN 
+COMMAND: cat foo2.txt | grep Rohan | sed s/o/u/g | wc 
+FLOW  COMMAND:  
+./flow test3.flow sed_to_wc  
+EXPECTED OUTPUT:  
+       1       4      19
+TEST-END
+
+TEST-4
+TEST-BEGIN 
+COMMAND: cat foo4.txt 2>&1 | wc
+FLOW  COMMAND:  
+./flow test4.flow catch_errors  
+EXPECTED OUTPUT:  
+       1       7      41
+TEST-END
+
+TEST-5
+TEST-BEGIN 
+COMMAND: cat foo.txt | wc
+FLOW  COMMAND:  
+./flow test5.flow process_pipe  
+EXPECTED OUTPUT:  
+       0       4      18
+TEST-END
